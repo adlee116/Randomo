@@ -9,10 +9,12 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -28,8 +30,8 @@ fun PoliceListScreen(
     viewModel: PoliceListScreenViewModel = hiltViewModel()
 ) {
     val policeListState by viewModel.policeState.collectAsStateWithLifecycle()
-    var loading = true
-    var policeItemList = emptyList<PoliceListItem>()
+    var loading = remember {true}
+    var policeItemList = remember {  emptyList<PoliceListItem>() }
 
     policeListState?.let { state ->
         loading = state.state is PoliceListState.State.Loading
@@ -37,11 +39,9 @@ fun PoliceListScreen(
             is PoliceListState.State.Reading -> {
                 policeItemList = state.state.listItems
             }
-
             is PoliceListState.State.Selected -> {
-                onItemClicked(PoliceListItem(state.state.id, state.state.name))
+                LaunchedEffect(Unit) { onItemClicked(PoliceListItem(state.state.id, state.state.name)) }
             }
-
             else -> {}
         }
     }
